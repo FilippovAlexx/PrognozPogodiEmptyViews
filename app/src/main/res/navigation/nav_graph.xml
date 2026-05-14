@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/citiesFragment">
+
+    <fragment
+        android:id="@+id/citiesFragment"
+        android:name="com.example.prognozpogodiemptyviews.views.CitiesFragment"
+        android:label="Прогноз погоды"
+        tools:layout="@layout/fragment_cities">
+        <action
+            android:id="@+id/action_citiesFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.prognozpogodiemptyviews.views.DetailFragment"
+        android:label="Детальный прогноз"
+        tools:layout="@layout/fragment_detail" />
+</navigation>
