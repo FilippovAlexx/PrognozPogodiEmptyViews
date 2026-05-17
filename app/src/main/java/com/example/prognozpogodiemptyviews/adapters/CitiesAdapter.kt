@@ -1,7 +1,6 @@
 package com.example.prognozpogodiemptyviews.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -17,7 +16,7 @@ class CitiesAdapter(
     private val onDeleteClick: (City) -> Unit
 ) : RecyclerView.Adapter<CitiesAdapter.CityViewHolder>() {
 
-    inner class CityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CityViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
         private val tvCityName: TextView = itemView.findViewById(R.id.tvCityName)
         private val tvTemperature: TextView = itemView.findViewById(R.id.tvTemperature)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
@@ -27,9 +26,16 @@ class CitiesAdapter(
 
         fun bind(city: City) {
             tvCityName.text = city.name
-            tvTemperature.text = "${city.weather.temperature}°C"
-            tvDescription.text = city.weather.description
-            tvIcon.text = city.weather.icon
+            val firstForecast = city.forecasts.firstOrNull()
+            if (firstForecast != null) {
+                tvTemperature.text = "${firstForecast.temperature}°C"
+                tvDescription.text = firstForecast.description
+                tvIcon.text = getIconEmoji(firstForecast.icon)
+            } else {
+                tvTemperature.text = "--°C"
+                tvDescription.text = "Нет данных"
+                tvIcon.text = "❓"
+            }
 
             imgFavorite.setImageResource(
                 if (city.isFavorite) android.R.drawable.btn_star_big_on
@@ -39,6 +45,17 @@ class CitiesAdapter(
             imgFavorite.setOnClickListener { onFavoriteClick(city) }
             btnDelete.setOnClickListener { onDeleteClick(city) }
             itemView.setOnClickListener { onItemClick(city) }
+        }
+
+        private fun getIconEmoji(iconName: String): String {
+            return when (iconName) {
+                "sunny", "clear" -> "☀️"
+                "partly_cloudy" -> "⛅"
+                "cloudy", "overcast" -> "☁️"
+                "rain" -> "🌧️"
+                "storm" -> "⛈️"
+                else -> "❓"
+            }
         }
     }
 

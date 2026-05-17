@@ -16,6 +16,16 @@
         android:padding="8dp"
         android:clipToPadding="false" />
 
+    <Button
+        android:id="@+id/btnRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Обновить погоду"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/fabAddCity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddCity"
         android:layout_width="wrap_content"

@@ -3,41 +3,36 @@ package com.example.prognozpogodiemptyviews.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.prognozpogodiemptyviews.interfaces.CityRepository
+import androidx.lifecycle.viewModelScope
+import com.example.prognozpogodiemptyviews.data.CityRepository
 import com.example.prognozpogodiemptyviews.models.City
-import com.example.prognozpogodiemptyviews.models.Weather
-import com.example.prognozpogodiemptyviews.models.WeatherVariant
-import kotlin.random.Random
+import com.example.prognozpogodiemptyviews.models.Forecast
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 class CitiesViewModel(private val repository: CityRepository) : ViewModel() {
 
-    private val _cities = MutableLiveData<List<City>>() //использовать StateFlow - более современная штука
+    private val _cities = MutableLiveData<List<City>>()
     val cities: LiveData<List<City>> = _cities
-
-    private val weatherVariants = listOf(
-        WeatherVariant("Солнечно", "☀️", 20, 35),
-        WeatherVariant("Облачно", "☁️", 10, 20),
-        WeatherVariant("Дождливо", "🌧️", 5, 15),
-        WeatherVariant("Снег", "❄️", -10, 0),
-        WeatherVariant("Ветрено", "💨", 5, 20)
-    )
 
     init {
         loadCities()
     }
 
     fun loadCities() {
-        val sorted = repository.getAllCitiesSorted()
-        _cities.value = sorted
+        _cities.value = repository.getAllCitiesSorted()
     }
 
     fun addCity(cityName: String): Boolean {
         if (cityName.isBlank()) return false
-        val exists = repository.getCityByName(cityName) != null
-        if (exists) return false
+        if (repository.getCityByName(cityName) != null) return false
 
-        val randomWeather = generateRandomWeather()
-        val newCity = City(cityName, randomWeather, false)
+        val newCity = City(
+            id = UUID.randomUUID().toString(),
+            name = cityName,
+            forecasts = emptyList(),
+            isFavorite = false
+        )
         repository.addCity(newCity)
         loadCities()
         return true
@@ -49,28 +44,33 @@ class CitiesViewModel(private val repository: CityRepository) : ViewModel() {
     }
 
     fun toggleFavorite(city: City) {
-        city.isFavorite = !city.isFavorite
-        repository.updateCity(city)
+        val updated = city.copy(isFavorite = !city.isFavorite)
+        repository.updateCity(updated)
         loadCities()
-    }
-
-    private fun generateRandomWeather(): Weather {
-        val randomIndex = Random.nextInt(weatherVariants.size)
-        val variant = weatherVariants[randomIndex]
-        val temperature = Random.nextInt(variant.minTemp, variant.maxTemp + 1)
-        return Weather(temperature, variant.description, variant.icon)
     }
 
     fun addDemoCities() {
-        val weather1 = Weather(24, "Солнечно", "☀️")
-        val weather2 = Weather(15, "Облачно", "☁️")
-        val weather3 = Weather(8, "Дождливо", "🌧️")
-        val city1 = City("Москва", weather1, true)
-        val city2 = City("Санкт-Петербург", weather2, false)
-        val city3 = City("Новосибирск", weather3, false)
-        repository.addCity(city1)
-        repository.addCity(city2)
-        repository.addCity(city3)
+        if (repository.getAllCitiesSorted().isNotEmpty()) return
+        repository.addCity(City(UUID.randomUUID().toString(), "Москва", emptyList(), true))
+        repository.addCity(City(UUID.randomUUID().toString(), "Санкт-Петербург", emptyList(), false))
+        repository.addCity(City(UUID.randomUUID().toString(), "Новосибирск", emptyList(), false))
         loadCities()
+    }
+
+    fun refreshWeather(onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val serverCities = repository.fetchWeatherFromServer()
+                if (serverCities.isNotEmpty()) {
+                    repository.mergeWithServerCities(serverCities)
+                    loadCities()
+                    onResult(true, "Данные обновлены")
+                } else {
+                    onResult(false, "Сервер вернул пустой ответ")
+                }
+            } catch (e: Exception) {
+                onResult(false, "Ошибка: ${e.localizedMessage ?: "Неизвестная ошибка"}")
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@ package com.example.prognozpogodiemptyviews.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.prognozpogodiemptyviews.interfaces.CityRepository
+import com.example.prognozpogodiemptyviews.data.CityRepository
 
 class ViewModelFactory(private val repository: CityRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
