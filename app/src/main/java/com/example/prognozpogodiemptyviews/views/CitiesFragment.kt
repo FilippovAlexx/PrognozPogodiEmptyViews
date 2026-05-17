@@ -5,6 +5,7 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -39,6 +40,13 @@ class CitiesFragment : Fragment() {
 
         rvCities = view.findViewById(R.id.rvCities)
         fabAddCity = view.findViewById(R.id.fabAddCity)
+
+        val btnRefresh = view.findViewById<Button>(R.id.btnRefresh)
+        btnRefresh.setOnClickListener {
+            viewModel.refreshWeather { success, message ->
+                Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
+            }
+        }
 
         val repository = (requireActivity().application as MyApplication).cityRepository
         val factory = ViewModelFactory(repository)
@@ -91,8 +99,7 @@ class CitiesFragment : Fragment() {
     private fun showAddCityDialog(view: View) {
         val inputEditText = EditText(requireContext())
         inputEditText.hint = "Название города"
-        inputEditText.inputType = InputType.TYPE_CLASS_TEXT or
-                InputType.TYPE_TEXT_FLAG_CAP_WORDS
+        inputEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
 
         AlertDialog.Builder(requireContext())
             .setTitle("Добавить город")

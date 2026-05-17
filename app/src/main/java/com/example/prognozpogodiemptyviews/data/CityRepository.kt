@@ -1,4 +1,4 @@
-package com.example.prognozpogodiemptyviews.interfaces
+package com.example.prognozpogodiemptyviews.data
 
 import com.example.prognozpogodiemptyviews.models.City
 
@@ -10,4 +10,6 @@ interface CityRepository {
     fun deleteCity(city: City)
     fun updateCity(updatedCity: City)
     fun getAllCitiesSorted(): List<City>
+    suspend fun fetchWeatherFromServer(): List<City>
+    suspend fun mergeWithServerCities(serverCities: List<City>)
 }

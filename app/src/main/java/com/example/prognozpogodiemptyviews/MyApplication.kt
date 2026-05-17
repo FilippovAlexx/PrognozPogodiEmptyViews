@@ -1,26 +1,15 @@
 package com.example.prognozpogodiemptyviews
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
+import android.app.Application
+import com.example.prognozpogodiemptyviews.data.CityRepository
+import com.example.prognozpogodiemptyviews.data.CityRepositoryImpl
 
-class MainActivity : AppCompatActivity() {
+class MyApplication : Application() {
+    lateinit var cityRepository: CityRepository
+        private set
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        return navController.navigateUp() || super.onSupportNavigateUp()
+    override fun onCreate() {
+        super.onCreate()
+        cityRepository = CityRepositoryImpl(applicationContext)
     }
 }
