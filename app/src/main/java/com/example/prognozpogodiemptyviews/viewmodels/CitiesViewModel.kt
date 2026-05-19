@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.prognozpogodiemptyviews.data.CityRepository
+import com.example.prognozpogodiemptyviews.interfaces.CityRepository
 import com.example.prognozpogodiemptyviews.models.City
 import com.example.prognozpogodiemptyviews.models.Forecast
 import com.example.prognozpogodiemptyviews.models.WeatherVariant

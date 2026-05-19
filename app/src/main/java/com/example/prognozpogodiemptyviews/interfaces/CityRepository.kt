@@ -1,4 +1,4 @@
-package com.example.prognozpogodiemptyviews.data
+package com.example.prognozpogodiemptyviews.interfaces
 
 import com.example.prognozpogodiemptyviews.models.City
 

@@ -3,7 +3,7 @@ package com.example.prognozpogodiemptyviews.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.prognozpogodiemptyviews.data.CityRepository
+import com.example.prognozpogodiemptyviews.interfaces.CityRepository
 import com.example.prognozpogodiemptyviews.models.City
 
 class DetailViewModel(private val repository: CityRepository) : ViewModel() {

@@ -1,7 +1,7 @@
 package com.example.prognozpogodiemptyviews
 
 import android.app.Application
-import com.example.prognozpogodiemptyviews.data.CityRepository
+import com.example.prognozpogodiemptyviews.interfaces.CityRepository
 import com.example.prognozpogodiemptyviews.data.CityRepositoryImpl
 
 class MyApplication : Application() {

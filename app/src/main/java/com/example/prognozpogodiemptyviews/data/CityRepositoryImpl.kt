@@ -2,6 +2,7 @@ package com.example.prognozpogodiemptyviews.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.prognozpogodiemptyviews.interfaces.CityRepository
 import com.example.prognozpogodiemptyviews.models.City
 import com.example.prognozpogodiemptyviews.network.RetrofitClient
 import com.google.gson.Gson
