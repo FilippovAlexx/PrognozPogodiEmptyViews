@@ -9,7 +9,7 @@ class ViewModelFactory(private val repository: CityRepository) : ViewModelProvid
         return when {
             modelClass.isAssignableFrom(CitiesViewModel::class.java) -> CitiesViewModel(repository) as T
             modelClass.isAssignableFrom(DetailViewModel::class.java) -> DetailViewModel(repository) as T
-            else -> throw IllegalArgumentException("Unknown ViewModel class")
+            else -> throw IllegalArgumentException("Неизвестный ViewModel class")
         }
     }
 }

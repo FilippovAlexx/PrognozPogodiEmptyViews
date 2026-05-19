@@ -1,4 +1,4 @@
-package com.example.prognozpogodiemptyviews.data
+package com.example.prognozpogodiemptyviews.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
