@@ -67,23 +67,44 @@ class CityRepositoryImpl(context: Context) : CityRepository {
 
     override suspend fun mergeWithServerCities(serverCities: List<City>) = withContext(Dispatchers.IO) {
         val localCities = loadCities().toMutableList()
-        val serverMap = serverCities.associateBy { it.id }
 
+        // Карта серверных городов: по ID
+        val serverMapById = serverCities.associateBy { it.id }
+        // Карта серверных городов: по названию (в нижнем регистре)
+        val serverMapByName = serverCities.associateBy { it.name.lowercase() }
+
+        // Обновляем существующие локальные города
         val updatedLocal = localCities.map { localCity ->
-            val serverCity = serverMap[localCity.id]
-            if (serverCity != null) {
+            // 1. Пытаемся найти по ID (как было раньше)
+            val serverCityById = serverMapById[localCity.id]
+            if (serverCityById != null) {
                 localCity.copy(
-                    name = serverCity.name,
-                    forecasts = serverCity.forecasts,
+                    name = serverCityById.name,
+                    forecasts = serverCityById.forecasts,
                     isFavorite = localCity.isFavorite
                 )
             } else {
-                localCity
+                // 2. Если не нашли по ID, ищем по названию (без учёта регистра)
+                val serverCityByName = serverMapByName[localCity.name.lowercase()]
+                if (serverCityByName != null) {
+                    // Обновляем город: берём серверный ID, прогнозы, сохраняем избранное
+                    localCity.copy(
+                        id = serverCityByName.id,
+                        forecasts = serverCityByName.forecasts,
+                        isFavorite = localCity.isFavorite
+                    )
+                } else {
+                    localCity
+                }
             }
         }.toMutableList()
 
+        // Добавляем новые города (которых нет ни по ID, ни по названию)
         serverCities.forEach { serverCity ->
-            if (updatedLocal.none { it.id == serverCity.id }) {
+            val exists = updatedLocal.any {
+                it.id == serverCity.id || it.name.equals(serverCity.name, ignoreCase = true)
+            }
+            if (!exists) {
                 updatedLocal.add(serverCity.copy(isFavorite = false))
             }
         }
